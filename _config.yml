@@ -64,6 +64,9 @@ permalink: /:title
 
 # Conversion
 markdown: kramdown
+highlighter: rouge
+kramdown:
+  syntax_highlighter: rouge
 
 # Sass
 sass:
