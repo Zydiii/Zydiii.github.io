@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "面向新手的 ShaderToy —— 入门篇（二）"
-description: ""
+description: "本篇学习用圆形组合成一张笑脸"
 date: 2022-08-21
 feature_image: images/2022.8.21/4.png 
 tags: [Shader, ShaderToy]
@@ -170,8 +170,11 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 }
 ```
 
+## 小结
+
+这一篇没有什么复杂的知识，通过组合最基础的圆形就可以形成一张笑脸啦~
+
 ## References
 
 - [ShaderToy Tutorial Part 2 - Building stuff with circles](https://www.youtube.com/watch?v=GgGBR4z8C9o&list=PLGmrMu-IwbguU_nY2egTFmlg691DN7uE5&index=2)
 - [ShaderToy Tutorial Part 3 - Making a Rectangle](https://www.youtube.com/watch?v=bigjgiavOM0&list=PLGmrMu-IwbguU_nY2egTFmlg691DN7uE5&index=3)
-
