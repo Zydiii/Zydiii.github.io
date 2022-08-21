@@ -3,7 +3,7 @@ layout: post
 title: "面向新手的 ShaderToy —— 入门篇（一）"
 description: "完全面向新手的 ShaderToy 教程，向伟大的 IQ 大神致敬🖖"
 date: 2022-08-19
-feature_image: images/2022.8.19/0.png 
+feature_image: images/2022.8.19/10.png 
 tags: [Shader, ShaderToy]
 ---
 
@@ -207,4 +207,4 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
 ## References
 
-- https://www.youtube.com/watch?v=u5HAYVHsasc&t=82s
+- [Shadertoy for absolute beginners](https://www.youtube.com/watch?v=u5HAYVHsasc&list=PLGmrMu-IwbguU_nY2egTFmlg691DN7uE5&index=1)
