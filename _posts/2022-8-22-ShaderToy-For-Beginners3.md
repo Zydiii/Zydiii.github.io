@@ -3,7 +3,7 @@ layout: post
 title: "面向新手的 ShaderToy —— 入门篇（四）"
 description: "加一点变化！"
 date: 2022-08-22
-feature_image: images/2022.8.21/4.png 
+feature_image: images/2022.8.22/1.gif
 tags: [Shader, ShaderToy]
 ---
 
