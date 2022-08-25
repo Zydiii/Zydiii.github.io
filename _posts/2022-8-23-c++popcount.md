@@ -4,7 +4,7 @@ title: "C++20 —— 二进制神器 popcount"
 description: "可以返回数字二进制中含有 1 的个数"
 date: 2022-08-23
 feature_image: images/2022.8.21/0.png 
-tags: [C++20]
+tags: [C++]
 ---
 
 <!--more-->
