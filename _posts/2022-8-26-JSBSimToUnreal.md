@@ -15,7 +15,7 @@ tags: [实验室的一些无聊任务, Unreal, JSBSim]
 
 而官方的这些 property 根据我的观察是需要在 C++ 代码里面绑定的：`PropertyManager->Tie()`，所以在 UE 中可能是因为找不到这个 property 从而触发了空指针之类的错误。
 
-而这些 property 是为 flight_control 服务的，也就是飞行控制的核心逻辑了，但是我没看懂这些 flight_control 是在哪里定义的，还是说他们自己就代表了一种函数？
+而这些 property 是为 flight_control 服务的，也就是飞行控制的核心逻辑了，但是我没看懂这些 flight_control 是在哪里定义的，还是说他们自己就代表了一种函数？但是我把官方示例中的 flight_control copy 过来运行还是会崩溃，甚至直接把这个 block 删掉也不行，但是我在官方的 xml 文件把 flight_control 这块删掉也仍然可以正常运行，这意味着其他部分可能也存在问题......
 
 看来直接套用是不太行的，得把 JSBSim 的基本工作流搞明白才能自由添加自己想要的配置。由于锅还没有分到我头上，我目前不打算继续研究了，之后有具体的任务之后再来参考一下这个 debug 经验......
 
