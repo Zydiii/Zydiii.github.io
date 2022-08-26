@@ -3,7 +3,7 @@ layout: post
 title: "面向新手的 ShaderToy —— 入门篇（五）"
 description: "好看的笑脸！"
 date: 2022-08-23
-feature_image: images/2022.8.23/5.png
+feature_image: images/2022.8.23/6.png
 tags: [Shader, ShaderToy]
 ---
 
@@ -370,10 +370,72 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
 ![eye](/images/2022.8.23/5.png)
 
+## 眉毛
+
+眉毛可以是由两个圆构成，并且将 uv 加上一些偏移形成弯弯的效果，同时利用 remap 对 uv.y 在特定范围内加上一些高光。类似地方法我们可以在下方绘制眉毛的阴影，这里可以将 col 的 a 通道和 shadowMask 进行一个混合，从而实现阴影而不是纯色的效果。
+
+```GLSL
+vec4 Brow(vec2 uv)
+{
+    float y = uv.y;
+    uv.y += uv.x*.8-.3;
+    uv.x -= .1;
+    uv -= .5;
+
+    vec4 col = vec4(0.);
+    
+    float blur = .1;
+    
+    float d1 = length(uv);
+    float s1 = S(.45, .45-blur, d1);
+    float d2 = length(uv-vec2(.1, -.2)*.7);
+    float s2 = S(.5, .5-blur, d2);
+    
+    float browMask = SAT(s1-s2);
+    
+    float colMask = remap(.7, .8, y)*.75;
+    colMask *= S(.6, .9, browMask);
+    vec4 browCol = mix(vec4(.4, .2, .2, 1.), vec4(1., .75, .5, 1.), colMask);
+    
+    uv.y += .15;
+    blur += .1;
+    d1 = length(uv);
+    s1 = S(.45, .45-blur, d1);
+    d2 = length(uv-vec2(.1, -.2)*.7);
+    s2 = S(.5, .5-blur, d2);
+    float shadowMask = SAT(s1-s2);
+    
+    col = mix(col, vec4(0., 0., 0., 1.), S(.0, 1., shadowMask)*.5);
+    
+    col = mix(col, browCol, S(.2, .4,  browMask));
+    
+    return col;
+}
+
+vec4 Smiley(vec2 uv)
+{
+    vec4 col = vec4(.0);
+    
+    uv.x = abs(uv.x);
+    vec4 head = Head(uv);
+    vec4 eye = Eye(within(uv, vec4(.03, -.1, .37, .25)));
+    vec4 mouth = Mouth(within(uv, vec4(-.3, -.4, .3, -.1)));
+    vec4 brow = Brow(within(uv, vec4(.03, .2, .4, .45)));
+    
+    col = mix(col, head, head.a);
+    col = mix(col, eye, eye.a);
+    col = mix(col, mouth, mouth.a);
+    col = mix(col, brow, brow.a);
+
+    return col;
+}
+```
+
+![brow](/images/2022.8.23/6.png)
+
 ## 小结
 
-感觉一切都好神奇！明明只是用了圆形的绘制方法，但是竟然可以形成一张看起来还比较立体的笑脸效果，真的太厉害了！在这一篇主要学到了四个小技巧：1）可以将要绘制的区域设定为一个 Rect，然后将 uv 映射到这个 Rect 中间绘制，这样就不需要被其他元素影响 2）为了形成更复杂的形状，可以在计算距离的时候加减一些函数值，从而生成不那么规则的形状 3）善用 Smoothstep、clamp、mix、线性映射等方法，绘制出想要的效果
-4）在绘制对称的形状时，可以只考虑绘制一半，然后将 uv 取绝对值
+感觉一切都好神奇！明明只是用了圆形的绘制方法，但是竟然可以形成一张看起来还比较立体的笑脸效果，真的太厉害了！在这一篇主要学到了几个小技巧：1）可以将要绘制的区域设定为一个 Rect，然后将 uv 映射到这个 Rect 中间绘制，这样就不需要被其他元素影响 2）为了形成更复杂的形状，可以在计算距离的时候加减一些函数值，从而生成不那么规则的形状 3）善用 Smoothstep、clamp、mix、线性映射等方法，绘制出想要的效果 4）在绘制对称的形状时，可以只考虑绘制一半，然后将 uv 取绝对值 5）想要阴影效果时可以对 a 通道进行一个设置从而不会纯色的效果
 
 ## References
 
