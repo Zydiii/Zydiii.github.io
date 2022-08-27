@@ -3,7 +3,7 @@ layout: post
 title: "面向新手的 ShaderToy —— 入门篇（六）"
 description: "会动的笑脸！"
 date: 2022-08-26
-feature_image: images/2022.8.26/2.jif
+feature_image: images/2022.8.26/2.gif
 tags: [Shader, ShaderToy]
 ---
 
