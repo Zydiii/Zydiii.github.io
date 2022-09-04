@@ -3,7 +3,7 @@ layout: post
 title: "面向新手的 ShaderToy —— 进阶篇（二）"
 description: "RayMarching"
 date: 2022-09-03
-feature_image: /images/2022.8.27/0.gif
+feature_image: /images/2022.9.3/8.png
 tags: [Shader, ShaderToy]
 ---
 
