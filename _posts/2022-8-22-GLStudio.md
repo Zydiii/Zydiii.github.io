@@ -4,7 +4,7 @@ title: "GL Studio 初探"
 description: "别问，问就是傻逼任务"
 date: 2022-08-22
 feature_image: images/2022.8.22/5.png
-tags: [实验室的一些无聊任务, GLStudio]
+tags: [GLStudio]
 ---
 
 <!--more-->
