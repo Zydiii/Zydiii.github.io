@@ -318,6 +318,10 @@ float GetDist(vec3 p) {
 
 ## 小结
 
+本篇用 Ray Marching 方法建立了一个简单的牛顿摆模型，主要用到了绘制立方体、球体、胶囊体的方法，在绘制边角圆滑的效果时，可以将计算得到的距离减去较小值，在绘制中空的形状时，可以先用二维的画法得到距离，然后与 z 组成二维向量计算距离。
+
+在设计动画时可以借助 iTime 实现循环播放的动作效果，并且可以利用 `min` 和 `max` 函数将一些旋转角度截断。如果要旋转的中心不在物体中心，可以在旋转前将坐标进行一定的偏移，旋转后再将偏移恢复。
+
 ## References
 
 - [Newton's Cradle: Modeling & Animation](https://www.youtube.com/watch?v=nd7Auhb9YN8&list=PLGmrMu-IwbguU_nY2egTFmlg691DN7uE5&index=45)
