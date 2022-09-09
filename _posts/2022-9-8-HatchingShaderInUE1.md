@@ -75,6 +75,15 @@ tags: [Shader, Unreal]
 
 ![](../images/2022.9.8/1.jpg)
 
+## Mix Texture Color With Hatching
+
+在 Paper 后处理材质中，将 SceneColor 以 Hatching 的结果为 alpha 与黑色混合，感觉没有纯素描好看hhh
+
+![](../images/2022.9.8/16.png)
+
+![](../images/2022.9.8/2.jpg)
+
+
 ## 小结
 
 本节主要学习了利用 DBuffer 和 WorldNormal 进行微小像素偏移以得到描边效果，同时可以通过 DBuffer 判断相机距离的远近以设置线条的粗细，利用 Perlin 噪声可以是描边进行随机扰动，看起来更有特点。
