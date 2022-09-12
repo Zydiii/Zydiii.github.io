@@ -91,3 +91,4 @@ tags: [Shader, Unreal]
 ## References
 
 - [Stylized lines and outlines - Unreal Material](https://www.youtube.com/watch?v=pJ42ylVyDpc)
+- [Mix hatching with textures - Unreal material](https://www.youtube.com/watch?v=_V7DFLe11sI)
