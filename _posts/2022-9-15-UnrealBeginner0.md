@@ -63,7 +63,7 @@ tags: [Unreal]
 - struct FVector 三维向量
 - SetActorLocation() 设置角色位置
 - EditInstanceOnly -> 可以在实例中编辑，EditDefaultsOnly -> 蓝图窗口可修改
-- 运行之后可以按 Shift+F1 让鼠标出来
+- 运行之后可以按 Shift+F1 让鼠标出来，鼠标不能移动也可以按 F8 解除控制
 - 在蓝图中的 Physics 菜单下面，开启 Simulate Physics 便可以开启物理模拟
 - 碰撞中重叠可以穿透，阻挡就是挡住
 - AddLocalOffset()，sweep，HitResult 当阻挡 bBlockingHit 为 true
@@ -74,6 +74,22 @@ tags: [Unreal]
 - StaticMesh AddTorque() 扭矩 AddForce() 力 约束可以锁定旋转
 - FMath 数学函数 FRand() 返回 0~1 随机数 FRandRange() Sin()
 - 删除 Binaries 文件夹和源代码源文件才能把 C++ 代码删干净，并且重新生成项目
+- Pawn 继承自 Actor，比 Actor 多了输入控制 SetupPlayerInputComponent，根组件 RootComponent = CreateSubobject<USceneComponent>(TEXT())，GetRootComponent() 获取根组件，MeshComponent->SetupAttachment() 组件绑定，SetRelativeLocation()、SetRelativeRotation()
+- 在游戏模式中设置 Default Pawn，则会把对应 Pawn 在 PlayerStart 处生成，然后在世界场景设置中选择我们的游戏模式
+- AutoPossessPlayer = EAutoReceiveInput::Player0 设置由哪个玩家控制，让默认玩家直接拥有该角色
+- PlayerInputComponent->BindAxis("MoveForward", this, &AMyPawn::MoveForward); 将 "MoveForward" 与实际的方法 &AMyPawn::MoveForward 产生联系，而键盘与 "MoveForward" 对应的设置需要在项目设置的输入中设置，Axis Mappings
+- USphereComponent 球形组件，用于设置碰撞，SetSphereRadius、SetCollisionProfileName(TEXT())、SetHiddenInGame()
+- SetRootComponent() 设置根组件
+- 直接通过 Mesh 资源路径设置 Mesh，static ConstructorHelper::FObjectFinder<UStaticMesh>，然后将 SetStaticMesh
+- USpringArmComponent 弹簧臂，TargetArmLength、bEnableCameralag、CameraLagSpeed，SetAttachment(SpringArmComp, USpringArmComponent::SocketName)、bUsePawnControlRotation
+- UPawnMovementComponent 运动组件，TickComponent，要设置 UpdateComponent、PawnOwner、ShouldSkipUpdate(DeltaTime)，SlideAlongSurface 沿着物体表面滑动，AddMovementInput，AddInputVector
+- 迁移可以让一个项目的资源转出去
+- Character 角色 bUseControllerRotationPitch、bUseControllerRotationYaw、bUseControllerRotationRoll，GetCharacterMovement()->RotationRate、JumpZVelocity、AirControl、bOrientRotationToMovement
+- AddMovementInput FRotationMatrix .GetUnittAxis(EAxis::X)
+- BindAction(IE_Pressed, IE_Released) Action 有按下和松开
+- 创建动画蓝图后需要在 Mesh 的 Animation 绑定，动画蓝图一般需要添加状态机，然后创建 Animinstance 控制动画播放逻辑，动画混合空间可以根据参数值设置动画，transition 条件中使用 timeRemaining(ratio) 动画还剩百分之几可以用于判断下一个动画
+- TryGetPawnOwner() 获取主角，GetVelocity()
+
 
 ## 小结
   
