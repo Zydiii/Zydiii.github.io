@@ -89,12 +89,46 @@ tags: [Unreal]
 - BindAction(IE_Pressed, IE_Released) Action 有按下和松开
 - 创建动画蓝图后需要在 Mesh 的 Animation 绑定，动画蓝图一般需要添加状态机，然后创建 Animinstance 控制动画播放逻辑，动画混合空间可以根据参数值设置动画，transition 条件中使用 timeRemaining(ratio) 动画还剩百分之几可以用于判断下一个动画
 - TryGetPawnOwner() 获取主角，GetVelocity()
-
+- UBoxComponent 触发盒子，SetCollisionEnabled、SetCollsionObjectType、SetCollisionResponceToAllChannels、SetCollisionResponseToChannel、SetBoxExtent、OnComponentBeginOverlap.addDynamic()、OnComponentEndOverlap.addDynamic()，要绑定的方法需要加上 UFUNCTION()，因为这是一种委托 DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_SixParams，获取碰撞对象也 Cast 为对应的类,RemoveDynamic
+- UFUNCTION(BlueprintImplementableEvent->在蓝图中实现)
+- 时间轴可以制作简易动画，比如开门关门，然后获取其输出
+- 计时器句柄 FTimerHandle GetWorldTimerManager().SetTimer(TimerHandle, this, func, time) GetWorldTimerManager().ClearTimer(TimerHandle)
+- Pilot 场景中物体可以直接控制该物体
+- TSubclassOf<class T> 用于生成子类，UKismetMathLibrary::RandomPointInBoudingBox 
+- BlueprintPure 直接可以调用，BlueprintNativeEvent 必须 FunctionName_Implementation，该方法的实现可以被覆盖
+- SpwanActor 生成 Actor，GetWorld()->SpwanActor<>() 生成 Actor
+- For Loop 循环
+- 变量 meta = (MakeEditWidget = "true") 显示 3D 控件，在编辑窗口可以看到
+- FMath::VInterpTo() 根据速度、起点、时间计算位置
+- UE_LOG *FString(__FUNCTION__)
+- UParticleSystemComponent 粒子组件，平时状态 UParticleSystem 碰撞状态，UGameplayStatics::SpawnEmitterAtLocation(GetWorld, ParticleSystem, GetActorLocation()) 生成粒子发射器
+- USoundCue 声音 碰撞状态，UGameplayStatics::PlayeSound2D(GetWorld(), Audio)
+- 要添加 UI，需要首先在 .build.cs 的 PublicDependencyModuleNames.AddRange(new string[] {"UMG})，然后新建 PlayerController 并将世界场景中的玩家控制器设置为该类，TSubclassof<UUserWidget> AddToViewport，UUserWidget* 是一种用户控件，可以绑定值，把空间设成 Variable，将变量和 UI 关联起来，可以使用 Get Owning Player Pawn 获取当前玩家，并类型转换为对应的类
+- UENUM(BlueprintType) 可以让蓝图看到该枚举类型 enum class UMETA(DisplayName = "")
+- 装备要用骨架网格，AttachToComponent(Owner->GetMesh(), Rules, slot)
+- GEngine->AddOnScreenDebugMessage
+- 动画蓝图中的状态中可以再加状态
+- 动画蒙太奇 UAnimMontage UAnimInstance = GetMesh()->GetAnimInstance() Montage_JumpToSection(FName(""), UAnimMontage)
+- 敌人要自动导航则需要在 .build.cs 里面加一个 AIModule，AAIController MoveTo() FAIMoveRequest FNavPAthSharedPtr
+- OnDetectSphereOverlapBegin() OnAttackSphereOverlapEnd()
+- 接收伤害 Actor 中有 TakeDamage() 发送伤害 UGameplayStatic::ApplyDamage
+- 装备 SetOwner() GetOwner()
+- 血条 UI SetVisibility(ESlateVisibility::Visible/Hidden) 需要将三维的位置映射为屏幕空间的位置 ProjectWorldLocationToScreen(TargetPosition, ScreenPosition) ScreenPosition.X -= ScreenSize.x * 0.5f 然后 UI->SetPositionInViewport(ScreenPosition) SetDesiredSizeInViewport(ScreenSize) 也可以在敌人身上加 Widget，选择屏幕空间就会对着屏幕，选择世界空间就相当于 Mesh
+- 武器拖尾在动画蒙太奇的通知处
+- GetOverlappingActors()
+- 获取当前关卡名称 FName CurrentLevel(*World->GetMapName()) 加载关卡 UGameplayStatics::OpenLevel(World, NextLevel) World = GetWorld() .RemoveFromStart(World->StreamingLevelsPrefix)
+- 保存关卡信息需要继承 USaveGame，把要保存的信息做成属性 struct FPlayerSlot { GENERATED_BODY() }; UGameplayStatic::CreateSaveGameObject(UMySaveGame::StaticClass()) 保存 UGameplayStatics::SaveGameToSlot(Instance, TEXT(""), 0) 保存中文需要将文件编码编程 UTF-8
+- 加载关卡信息 Cast<UMySaveGame>(UGameplayStatics::LoadGameFromSlot(TEXT(""), 0))
+- 暂停 UGameplayStatics::SetGamePaused(this, bool)
+- UI 动画在 UI 设计器中动画添加，滑动效果可以设定 Translation 变化，然后可以在 PlayerController 中播放对应的 UI 动画，Delay
+- 精简工程 Map->资源场景 蓝图类 其他 C++ 类 项目设置 设置信息在 Config/.ini 文件中，手动复制 要把 Intermidate 文件夹删掉，然后 Generate VS Project
+- SetupAttachment(GetMesh(), FName(""))
 
 ## 小结
   
-  
+零零碎碎学了一些 UE 的基础使用方法，感觉这个 UP 主的视频对于新手太有好了！个人感觉比 Siki 学院的入门课讲得清晰很多，至少终于知道 UPROPERTY 这类东西到底有啥意义了......不过 UE 的 API 也太多了，大家是怎么记住各种函数与方法的，多少还有一点懵圈，还得加油学习！
 
 ## References
 
 - [UE4 C++ 入门（无参考项目）[1/2]](https://www.bilibili.com/video/BV1RE411d7J8)
+- [UE4 C++ 入门（无参考项目）[2/2]](https://www.bilibili.com/video/BV1ce411x77U)
