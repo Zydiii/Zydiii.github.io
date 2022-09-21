@@ -7,6 +7,8 @@ feature_image: images/2022.8.24/0.jpg
 tags: [Unreal]
 ---
 
+这一篇来了解一些基础的材质节点。
+
 <!--more-->
 
 ## 一些材质相关知识点
