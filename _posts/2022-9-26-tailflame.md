@@ -1,15 +1,27 @@
 ---
 layout: post
-title: "在 UE 中实现战斗机尾焰效果"
+title: "在 UE 中实现尾焰和导弹效果"
 description: ""
-date: 2022-09-24
+date: 2022-09-26
 feature_image: images/2022.9.24/4.gif
 tags: [Unreal]
 ---
 
 <!--more-->
 
-## Rings
+## 尾焰
+
+### 特点解析
+
+  ![](../images/2022.9.26/0.jpeg)
+
+  ![](../images/2022.9.26/1.jpg)
+
+  ![](../images/2022.9.26/15.png)
+
+飞机的尾焰呈现圆锥状，开始处较明亮，亮度和大小逐渐减小，中心较亮，有内焰和外焰，并且会有光圈的效果。
+
+### Rings
 
 1. 用一些平面来做光圈，导入 UE
    
@@ -23,7 +35,7 @@ tags: [Unreal]
 
    ![](../images/2022.9.26/2.png)
 
-## Flame Body
+### Flame Body
 
 1. 火焰 Mesh 呈现子弹状，模拟尾焰逐渐变小的效果
 
@@ -51,7 +63,7 @@ tags: [Unreal]
 
        ![](../images/2022.9.26/8.png)
 
-## Distortion
+### Distortion
 
 1. 这个粒子我没看出来什么效果？但是它应该是想要模拟火焰燃烧后形成的扭曲视效，材质上使用了折射接口，应该是通过这个物体看过去后面会形成折射效果
    
@@ -61,10 +73,38 @@ tags: [Unreal]
    
     ![](../images/2022.9.26/10.png)
 
-## 最终效果
+
+## 炮弹
+
+1. 观察真实的照片和需求方发来的图片效果，可以看到干扰弹的几个特点，1）头部较圆较亮 2）火焰从头到尾逐渐扩散，大小变大 3）亮度和浓度逐渐衰减
+
+    ![](../images/2022.9.26/0.webp)
+
+    ![](../images/2022.9.26/0.jpg)
+
+2. 新建一个 Fountain 系统，将初速度设为 x 轴负方向，减弱重力，然后是生成烟雾的老方法，利用 SubUV，修改 Sprite 的材质为 SubUV 材质，然后将 Sub Image Size 修改为 Sub 的数量，调整初速度和 scale size
+
+    ![](../images/2022.9.26/11.png)
+
+3. 为头部添加闪光效果，加上 Color 组件，设置一条 Curve for Colors 即可
+
+    ![](../images/2022.9.26/12.png)
+
+    ![](../images/2022.9.26/13.png)
+
+4. 新建导弹蓝图，为其添加 Niagara System 和 ProjectileMovement，设置初速度和最大速度，让球体作为根组件。然后找到飞机的蓝图，在飞机的关节中找到发射炮弹的关节，并添加 Socket。在蓝图中添加 Scene 组件，绑定对应的关节。然后绑定键盘事件，当按下 F 后 Spwan 导弹 Actor 即可，并且调整导弹的方位。 
+
+    ![](../images/2022.9.26/14.png)
+
 
 
 
 ## 小结
 
+战机尾焰主要由四个部分构成，光圈、外焰、内焰、折射粒子组成，这里比较关键的点是材质的制作，利用纹理的移动、折射视效模拟火焰燃烧的效果，以及修改尾焰的透明度，让远处和内部的透明度降低。
+
+
 ## References
+
+- [【UE5】战斗机尾焰起落架教程-军事迷福音](https://www.bilibili.com/video/BV15S4y1g7oM/?vd_source=b3a7866ea03eaa7c70c1f24f0895715f)
+- [Missile Trajectory - Unreal Engine 4 Tutorial](https://www.youtube.com/watch?v=ok4MIUbXc3I)
