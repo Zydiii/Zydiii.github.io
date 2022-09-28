@@ -30,14 +30,14 @@ google_analytics: ""
 navigation:
   - text: Home
     url: /
-  # - text: About
-  #   url: /about/
-  # - text: Style Guide
-  #   url: /style-guide/
+  - text: About
+    url: /about/
+  - text: Style Guide
+    url: /style-guide/
   - text: Tags
     url: /tags/
-  # - text: Download
-  #   url: https://github.com/JustGoodThemes/Scriptor-Jekyll-Theme
+  - text: Download
+    url: https://github.com/JustGoodThemes/Scriptor-Jekyll-Theme
 
 # The shortname for your Disqus site to enable comments.
 disqus: justgoodthemes
@@ -55,7 +55,7 @@ plugins:
   - jekyll-paginate
 
 # http://jekyllrb.com/docs/pagination/
-paginate: 3
+paginate: 10
 paginate_path: '/page:num/'
 
 
