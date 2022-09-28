@@ -73,6 +73,13 @@ tags: [Unreal]
    
     ![](../images/2022.9.26/10.png)
 
+### 合并效果
+
+![](../images/2022.9.26/2.jpg)
+
+![](../images/2022.9.26/3.jpg)
+
+![](../images/2022.9.26/4.jpg)
 
 ## 炮弹
 
@@ -96,15 +103,46 @@ tags: [Unreal]
 
     ![](../images/2022.9.26/14.png)
 
+### 合并效果
 
+![](../images/2022.9.26/5.jpg)
 
+![](../images/2022.9.26/6.jpg)
+
+![](../images/2022.9.26/7.jpg)
+
+## 其他
+
+其实有很多资源已经把烟雾模拟做的很好了，比如：
+
+![](../images/2022.9.26/8.jpg)
+
+![](../images/2022.9.26/9.jpg)
+
+![](../images/2022.9.26/10.jpg)
+
+![](../images/2022.9.26/16.png)
+
+![](../images/2022.9.26/17.png)
+
+![](../images/2022.9.26/18.png)
+
+其实比较关键的点就是把烟雾的 SubUV Image 做出来，以及创建一些模型利用 Mesh 来形成想要的粒子形状。
+
+此外，UE5 添加了一个 Beta 功能：Niagara Fluid，但是我的台式机一添加这个就崩溃，笔记本空间不够装不下 UE5，这个粒子系统就是真正的基于物理的烟雾模拟，还可以调整烟雾的温度密度等等，很期待能体验这个功能，等 npy 的电脑到了用他的电脑玩一玩。
+
+![](../images/2022.9.26/19.png)
 
 ## 小结
 
 战机尾焰主要由四个部分构成，光圈、外焰、内焰、折射粒子组成，这里比较关键的点是材质的制作，利用纹理的移动、折射视效模拟火焰燃烧的效果，以及修改尾焰的透明度，让远处和内部的透明度降低。
+
+炮弹的关键利用 SubUV Image 产生烟雾，以及通过 Scale Color 设置头部较亮的效果，然后利用 Spwan Actor 生成导弹，导弹主要的运动逻辑由 Movement 组件控制。
 
 
 ## References
 
 - [【UE5】战斗机尾焰起落架教程-军事迷福音](https://www.bilibili.com/video/BV15S4y1g7oM/?vd_source=b3a7866ea03eaa7c70c1f24f0895715f)
 - [Missile Trajectory - Unreal Engine 4 Tutorial](https://www.youtube.com/watch?v=ok4MIUbXc3I)
+- [UE5 Niagara Fluids Tutorial - Flamethrower [1/2]](https://www.youtube.com/watch?v=k3EBxQGVSj8)
+- [Unreal Engine Helicopter Flying #17 - IR Flares Niagara Particle](https://www.youtube.com/watch?v=eG7eqGh2sP4)
