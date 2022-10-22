@@ -11,7 +11,7 @@ tags: [C++]
 
 ## std::lower_bound(), std::upper_bound()
 
--`std::lower_bound()` 在指定区域内查找不小于目标值的第一个元素
+- `std::lower_bound()` 在指定区域内查找不小于目标值的第一个元素
 
 - `std::upper_bound()` 在指定范围内查找大于目标值的第一个元素
 
@@ -36,4 +36,29 @@ int main () {
 
   return 0;
 }
+```
+
+- 在今天的每日一题中遇到了自定义 upper_bound 比较函数的写法，可以比较多维数组，他在找第一个满足比较函数的数据，比如这里我们要找第一个 jobs[i-1][0] < job[1] 的，这样写就比较方便而且快速，因为这个函数是用的二分查找
+
+```C++
+class Solution {
+public:
+    int jobScheduling(vector<int>& startTime, vector<int>& endTime, vector<int>& profit) {
+        int n = startTime.size();
+        vector<vector<int>> jobs(n);
+        for(int i{0}; i < n; i++) {
+            jobs[i] = {startTime[i], endTime[i], profit[i]};
+        }
+        sort(jobs.begin(), jobs.end(), [&](auto a, auto b){return a[1] < b[1];});
+
+        vector<int> dp(n + 1);
+        for(int i = 1; i <= n; i++) {
+            int j = upper_bound(jobs.begin(), jobs.begin() + i - 1, jobs[i-1][0], [&](int st, vector<int> &job) {return st < job[1];}) - jobs.begin();
+            std::cout << i << " " << j << std::endl;
+            dp[i] = max(dp[i - 1], dp[j] + jobs[i - 1][2]);
+        }
+
+        return dp[n];
+    }
+};
 ```

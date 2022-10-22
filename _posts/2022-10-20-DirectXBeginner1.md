@@ -193,6 +193,126 @@ VSOut main(float2 pos : Position, float3 color : Color)
 	};
   ```
 
+- Device Coordinate 和画布的坐标系不同，需要将其归一化到 -1~1，且 y 轴的方向也有所不同
+
+  ```C++
+	wnd.Gfx().DrawTestTriangle(timer.Peek(), wnd.mouse.GetPosX() / 400.0f - 1.0f, -wnd.mouse.GetPosY() / 300.0f + 1.0f);
+  ```
+
+- 向量操作可以使用 XMVECTOR、XMVector4Dot、XMVectorGetX、XMVector3Transform
+
+## 3D Cube
+
+- 投影变换使用 XMMatrixPerspectiveLH
+- 要为立方体的每个面设置颜色，需要在 Pixel Shader 中声明 `uint tid : SV_PrimitiveID`，SV_PrimitiveID 会告诉 pipeline 为每个三角形生成一个 unique id，然后为颜色创建一个 constant buffer，因为立方体的每个面由两个三角形组成，所以需要将 tid / 2
+
+```GLSL
+cbuffer CBuf {
+	float4 face_color[6];
+};
+
+float4 main(uint tid : SV_PrimitiveID) : SV_TARGET{
+	return face_color[tid / 2];
+}
+```
+
+## Z-Buffer
+
+- 存储深度信息的 buffer，创建深度缓存首先需要创建 depth stensil state，然后绑定 depth state，之后再创建 depth stensil texture，然后需要为 texture 创建 view，最后需要绑定一下 rendertarget
+
+  ```C++
+    // create depth stensil state
+	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
+	dsDesc.DepthEnable = TRUE;
+	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	wrl::ComPtr<ID3D11DepthStencilState> pDSState;
+	GFX_THROW_INFO(pDevice->CreateDepthStencilState(&dsDesc, &pDSState));
+
+	// bind depth state
+	pContext->OMSetDepthStencilState(pDSState.Get(), 1u);
+
+	// create depth stensil texture
+	wrl::ComPtr<ID3D11Texture2D> pDepthStencil;
+	D3D11_TEXTURE2D_DESC descDepth = {};
+	descDepth.Width = 800u;
+	descDepth.Height = 600u;
+	descDepth.MipLevels = 1u;
+	descDepth.ArraySize = 1u;
+	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
+	descDepth.SampleDesc.Count = 1u;
+	descDepth.SampleDesc.Quality = 0u;
+	descDepth.Usage = D3D11_USAGE_DEFAULT;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	GFX_THROW_INFO(pDevice->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
+
+	// create view of depth stensil texture
+	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV = {};
+	descDSV.Format = DXGI_FORMAT_D32_FLOAT;
+	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	descDSV.Texture2D.MipSlice = 0u;
+	GFX_THROW_INFO(pDevice->CreateDepthStencilView(
+		pDepthStencil.Get(), &descDSV, &pDSV
+	));
+
+    // bind depth stensil view to OM
+	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
+  ```
+
+- 每帧要记得清空深度缓存
+
+  ```C++
+	pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+  ```
+
+![](../images/2022.10.20/3.png)
+
+## Bindable / Drawable System
+
+- 为我们的小引擎设计更好的架构，首先是 Bindable 对象，它们是可以绑定到渲染管线上的东西如 Inputlayout、Shader、Buffer、State，可以绑定到 GFX 上，另一种类为 Drawable，它们包含了一系列 Bindable，可以绘制该对象
+
+![](../images/2022.10.20/4.png)
+
+
+## Texture Mapping
+
+- 纹理用 `ID3D11ShaderResourceView` 表示，首先也是要创建纹理资源，设置大小等，然后创建相应的资源和指针
+- 纹理还需要 Sampler，设置采样参数等，在 Pixel Shader 中使用 Sample 就可以采样了
+
+```GLSL
+Texture2D tex;
+
+SamplerState splr;
+
+float4 main( float2 tc : TexCoord ) : SV_Target
+{
+	return tex.Sample( splr,tc );
+}
+```
+
+## Dynamic Lighting
+
+- 添加一个简单的 Phone 模型，将光照信息传入 Constant Buffer，然后在 Pixel Shader 中计算夹角等数据，在 Vertex Shader 中需要获取法线并输出
+
+## Imgui / Assimp
+
+- 使用优秀的库设置 UI 和导入模型
+
+## Scene Graph
+
+- 当一个模型导入进来后，我们需要知道它的层级关系，所以需要利用一个 Graph 在背后做支撑，这样就可以从父级传递变换等操作到子级上
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -205,3 +325,4 @@ VSOut main(float2 pos : Position, float3 color : Color)
 ## References
 
 - [C++ 3D DirectX Tutorial [First Triangle Pt 1]](https://www.youtube.com/watch?v=pfbWt1BnPIo&list=PLqCJpWy5Fohd3S7ICFXwUomYW0Wv67pDD&index=17)
+- [Intrinsic Functions](https://learn.microsoft.com/en-us/windows/win32/direct3dhlsl/dx-graphics-hlsl-intrinsic-functions)
