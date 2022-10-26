@@ -119,7 +119,7 @@ Bindable 是 Graphics 的友元类，主要表示了一些可以被绑定到渲�
 带有一个 drawable 对象指针和 VertexConstantBuffer<Transform> 指针，初始化时创建指针，bind 时计算当前 drawable 的矩阵然后更新 buffer 并 bind
 
 - 初始化时创建一个 constant buffer 存储 transform 数据
-- bind：计算模型的世界坐标变换矩阵和投影矩阵（这个计算还需要考虑一下）
+- bind：计算模型的世界坐标变换矩阵和投影矩阵（这个计算还需要考虑一下） modelView 应该是世界坐标相对于相机的局部坐标
 
 ### VertexBuffer
 
@@ -184,16 +184,119 @@ Bindable 是 Graphics 的友元类，主要表示了一些可以被绑定到渲�
 负责生成绘制窗口
 
 - 初始化时新建窗口和点光源，并设置投影矩阵，XMMatrixPerspectiveLH 生成一个左手坐标系投影矩阵
+- DoFrame 时，首先会调用 graphics 的 beginframe 和 setcamera，然后 light bind，之后调用光源和模型的 draw，然后绘制相关的 Imgui 菜单，最后再调用 graphics 的 endframe
+- Go() 是一个无限循环，负责监听输入事件，然后调用 DoFrame 完成绘制
 
+## Camera
 
+相机类，包含了相机的位置、旋转参数
 
+- XMMatrixLookAtLH 生成以相机为原点的坐标，将固定好的相机方向单位化，计算出从局部坐标转换成世界坐标的矩阵，然后求这个矩阵的逆矩阵，就是从世界坐标转换为局部坐标的转换矩阵，需要传入相机的位置、朝向、垂直方向
+- Camera::GetMatrix() 就是返回了相机矩阵，模型的通过乘以该矩阵将坐标变换到相对于相机的坐标
+- Camera::SpawnControlWindow() 生成了调整相机位置和角度的菜单，以及 reset
 
+## PointLight
 
+点光源类，描述了光源的位置、颜色、强度、衰减系数，包含一个 SolidSphere mesh 和 PixelConstantBuffer 存储光源数据
 
+- 关键字mutable是专门用来解决语义const和语法const不一致的问题。当一个成员变量被声明为mutable时，它显示地表明"这个变量可能在一个const语义环境中被更改”
+- 初始化时生成 mesh 和 buffer
+- SpawnControlWindow() 生成光源设置菜单
+- Draw 的时候设置 mesh 位置并调用 mesh 的 draw 发出渲染命令
+- Bind 时将光源信息的 buffer 更新并绑定，为什么 pointlight 要多一步 bind 操作，因为这是给后面的模型绘制的 PixelShader 绑定 buffer 传递光照数据
+
+## BGRAColor
+
+颜色类，存有 unsigned char 类型的 r g b a
+
+- unsigned char 没有符号位，能表示 0~255
+
+## Keyboard
+
+保存了键盘输入事件列表，当键盘按下和松开时会将相应事件存入列表中，输入事件也会存入列表中，并且用 bitset 存储了键盘的按下状态
+
+- 类模板 std::optional 管理一个可选的容纳值，即可以存在也可以不存在的值，std::nullopt 是 C++ 17 中提供的没有值的 optional 的表达形式，等同于 { } 
+
+## Mouse
+
+保存了鼠标输入事件列表，可以获取鼠标是否在窗口里、左右键点击、获取鼠标位置、滚轮上下滑动、鼠标移动、鼠标进入离开窗口
+
+## Window
+
+负责创建窗口，获得窗口句柄和窗口实例，绑定输入事件
+
+- 窗口单例 初始化时创建 WNDCLASSEX 描述窗口类信息，然后注册窗口 RegisterClassExA，析构时需要取消注册 UnregisterClass，释放内存空间
+- 初始化时创建窗口，获取窗口句柄，创建 graphics 类
+- PeekMessage 分发捕获到的消息 TranslateMessage DispatchMessage
+- 根据消息类型处理消息
+
+## Surface
+
+存储一张图片的 Color
+
+## Vertex
+
+- 函数模板的特化：当函数模板需要对某些类型进行特别处理，称为函数模板的特化。
+- constexpr 关键字的功能是使指定的常量表达式获得在程序编译阶段计算出结果的能力，而不必等到程序运行阶段。C++ 11 标准中，constexpr 可用于修饰普通变量、函数（包括模板函数）以及类的构造函数。
+- reinterpret_cast 运算符并不会改变括号中运算对象的值，而是对该对象从位模式上进行重新解释
+- 完美转发 std::forward() 根据右值判断的推倒，调用forward 传出的值，若原来是一个右值，那么他转出来就是一个右值，否则为一个左值.右值引用类型是独立于值的，一个右值引用参数作为函数的形参，在函数内部再转发该参数的时候它已经变成一个左值，并不是他原来的类型。如果我们需要一种方法能够按照参数原来的类型转发到另一个函数，这种转发类型称为完美转发（右值我一直没搞清楚，还是有点迷糊）
+- 这个类没太看懂...
+
+### VertexLayout
+
+定义了 ElementType 描述不同的顶点数据
+
+- 保存了一组 elements，Element 可以生成顶点数据的描述
+- Resolve 解析对应类型的数据
+
+### Vertex
+
+包含一个 VertexLayout 和 char* pData，可以给 pAttribute 设置数据
+
+- SetAttribute 
+- SetAttributeByIndex
+
+### ConstVertex
+
+包含一个 Vertex，Attr() 获取属性值
+
+### VertexBuffer
+
+包含 VertexLayout 和 std::vector<char> buffer，可以添加和获取数据
+
+## Mesh
+
+模型相关的类（大概看懂了，但是也不是完全懂...）
+
+### Mesh
+
+包含自身位置 transform
+
+- 初始时绑定相关 bindable
+- 绘制时需要更新一下 transform 然后调用绘制命令
+
+### Node
+
+包含名字、子节点、局部坐标系位置、累积的变换矩阵、一组 mesh
+
+- ShowTree 调用 Imgui 绘制模型的层级树
+
+### ModelWindow
+
+模型层级树菜单相关类
+
+### Model
+
+包含根节点、一组 mesh、窗口绘制类
+
+- 初始化时使用 assimp 加载对应模型，生成根节点，读取 mesh
+- 绘制时需要将变换矩阵都加上，然后调用节点的绘制命令
+- ParseMesh 需要设置一些 bindable 对象，如顶点、索引、shader、layout、pixel shader 要用的常量等
+- ParseMesh 生成层级树，返回根节点
 
 ## 小结
 
-
+这一节从头到尾梳理了一下引擎代码，对 D3D 的渲染管线有了一个比较清晰的认识，学到了如何构建一个引擎架构，好玩！接下来继续开始构建我的小引擎~
 
 ## References
 
