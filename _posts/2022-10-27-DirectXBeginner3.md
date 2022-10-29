@@ -99,7 +99,36 @@ tags: [DirectX11]
 
 ## Alpha Blending
 
-- 添加一个 Bindable 类 Blender，保存一个 BlendState
+- 添加一个 Bindable 类 Blender，保存一个 BlendState，使用 CreateBlendState 创建 BlendState，使用 OMSetBlendState 绑定
+- 在绘制完全透明物体时需要做 alpha test，在 Pixel Shader 使用 clip 可以在值为负数时舍弃掉该片段的绘制，这里判断 alpha 小于 0.1 就舍弃掉，为什么不直接设为 1 呢，因为当相机较远时会有一些片段看不到了，这里猜测的原因是因为 MipMap 混合了，所以本来不透明的片段也变成透明的了
+
+```GLSL
+clip(dtex.a < 0.1f ? -1 : 1);
+```
+
+![](../images/2022.10.27/18.png)
+
+- 对于一些双面的物体，需要关掉 Backface Cull，这个阶段需要通过 Rasterizer 来控制，使用 CreateRasterizerState 创建一个 Rasterizer State，如果我们位于背面，那么视线方向和法线方向的 Dot 是大于 0 的，我们需要将 Normal 反向
+- Shader 中也可以使用 #ifdef 
+- 在做 Alpha 混合的时候需要注意绘制顺序，不然就会出现下面红色完全被蓝色遮盖的情况
+
+![](../images/2022.10.27/19.png)
+
+![](../images/2022.10.27/20.png)
+
+- 在之前的实现中，加载图片是很慢的，如果图片资源比较多，那么程序启动需要花费很长一段时间，这里可以用 DirectXTex 来加载纹理提升效率
+
+## Dynamic Constant Buffer
+
+- 作者构建了一个 Dynamic Constant Buffer，这样可以指定 Buffer 的类型和成员参数名，帮助灵活地构建 Buffer，Buffer 其实就是由两部分组成，一个是实际存储地 Bytes，可以有很多类型加上 padding，一个是数据的 layout，这个 layout 我们用一个树结构来表示，可以存储 struct 和 float、bool 等变量
+
+![](../images/2022.10.27/21.png)
+
+
+
+![](../images/2022.10.27/22.png)
+
+
 
 
 
