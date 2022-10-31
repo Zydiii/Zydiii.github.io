@@ -124,13 +124,37 @@ clip(dtex.a < 0.1f ? -1 : 1);
 
 ![](../images/2022.10.27/21.png)
 
-
-
 ![](../images/2022.10.27/22.png)
 
+- static_assert 用来做编译期间的断言，因此叫做静态断言。如果第一个参数常量表达式的值为真(true 或者非零值)，那么 static_assert 不做任何事情，就像它不存在一样，否则会产生一条编译错误，错误位置就是该static_assert 语句所在行，错误提示就是第二个参数提示字符串。
+- 这里学到了一种很巧妙的做法 XMacro List，如果有多种类型需要检验，可以先 define 一个 X(type)，但是这个时候 X 是没有定义的，在一些需要用的地方再 define X() 实现具体的功能
 
+```C++
+#define LEAF_ELEMENT_TYPES \
+	X( Float ) \
+	X( Float2 ) \
+	X( Float3 ) \
+	X( Float4 ) \
+	X( Matrix ) \
+	X( Bool )
+#define X(el) static_assert(Map<el>::valid,"Missing map implementation for " #el);
+LEAF_ELEMENT_TYPES
+#undef X
+```
 
+## Stencil Buffer Outline Effect
 
+- 描边的一个简单思路是先渲染基础物体，然后再渲染一个放大后的物体减去一个 Mask，这个 Mask 是基础物体
+
+![](../images/2022.10.27/23.png)
+
+- 新建一个 Bindable 类，存储 DepthStencilState，有几种 Mode，当 Off 时就不管正常绘制，当 Write 时就将绘制的结果存起来，当 Mask 时就只绘制不等于 Write 的部分，因为这部分才是物体放大之后绘制的像素位置，这样就起到了 Mask 效果形成轮廓，主要就是通过设置 Depth Stencil State 的一些参数才决定对于一些像素的处理方法，不过这个方法会有一点 bug，当一些没有绘制边界的物体对 box 进行遮挡之后，因为 stencil buffer 还是原来的物体，但是这个时候绘制的像素已经不一样了，所以也会被处理成边界，这个问题需要用 RenderQueue 来解决
+
+![](../images/2022.10.27/24.png)
+
+![](../images/2022.10.27/25.png)
+
+## Render Queue System
 
 
 
