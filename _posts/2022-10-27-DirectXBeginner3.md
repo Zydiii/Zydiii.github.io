@@ -156,14 +156,29 @@ LEAF_ELEMENT_TYPES
 
 ## Render Queue System
 
+- 对于不同物体如果我们都要去写对应的一些效果，并且当前架构下会遍历整个场景树去一个一个调用渲染命令，那么会有大量冗余的工作，作者在这里提出了 Pass 的概念，对于不同的渲染目的，属于不同的 Pass，然后每个 Pass 有一系列 Job 需要完成，对于同一个 Mesh，顶点数据是一致的，不同的视觉效果可以看作多个 Tech，每个 Tech 下面有 Step，这些 Step 对应了一些 Job，这样我们执行渲染命令时就不需要遍历一遍场景了，直接执行 Pass 即可
 
+![](../images/2022.10.27/26.png)
 
+![](../images/2022.10.27/27.png)
 
+- 修改 Drawable，包含一组 Technique 列表，Submit 函数遍历所有 Technique
+- Technique 包含一组 Step 和自身激活状态
+- Step 包含一个对应的 Pass 编号和一组 Bindable
+- FrameCommander 包含一组 Pass，可以 Accept 和 Execute
+- Pass 包含一组 Job，可以 Accept 和 Execute
+- Job 对应一个 Step 和 Drawable
+- 同时为了让 UI 可以控制一个物体的 Tech，作者设计了一个 Visitor Probe / Static Bridge 机制，让 ImGui 的 Probe 对应到 Tech 上（太困了这部分我没太听懂，英语真的好烂 😴）这样就可以通过 UI 控制一个物体是否使用某个 Tech，以及调整 Tech 的参数
 
+![](../images/2022.10.27/29.png)
+
+![](../images/2022.10.27/30.png)
+
+![](../images/2022.10.27/28.png)
 
 ## 小结
 
-
+利用 Assimp 加载模型，使用多种纹理可以带来视觉效果的提升，而且一个引擎的架构很重要，尤其是渲染特殊物体和效果，比如透明、描边等，设计一个 Pass Job 结构很巧妙。
 
 ## References
 
