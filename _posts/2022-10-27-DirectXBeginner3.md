@@ -3,7 +3,7 @@ layout: post
 title: "DirectX11 初探（四）"
 description: ""
 date: 2022-10-27
-feature_image: images/2022.10.27/17.png
+feature_image: images/2022.10.27/28.png
 tags: [DirectX11]
 ---
 
