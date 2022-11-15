@@ -7,8 +7,6 @@ feature_image: images/2022.10.10/0.png
 tags: [Unity, Shader]
 ---
 
-好久没用 Unity 了，突然封楼没靠谱电脑用，在宿舍玩玩 Unity~
-
 <!--more-->
 
 ## 掌握标准着色器
@@ -81,9 +79,95 @@ SubShader
 
 ![](../images/2022.10.10/3.png)
 
+## 进阶的透明效果
 
+- 要设置一个透明 shader，最关键的设置是 `Tags { "RenderType"="Transparent" }`，以及在 `#pragma surface surf Standard fullforwardshadows` 后面添加 alpha
+- Cull Off 可以关闭剔除背面，Cull Back Cull Front 分别剔除背面和正面，可以通过此方式分别渲染正面和背面，因为如果同时渲染正面背面可能会产生问题
 
+```GLSL
+Shader "MY_Shader/Glass"
+{
+    Properties
+    {
+        _Color ("Color", Color) = (1,1,1,1)
+        _MainTex ("Albedo (RGB)", 2D) = "white" {}
+        _Glossiness ("Smoothness", Range(0,1)) = 0.5
+        _Metallic ("Metallic", Range(0,1)) = 0.0
+        _Thickness ("Thickness", Range(-1, 1)) = 0.5
+    }
+    SubShader
+    {
+        Tags { "RenderType"="Transparent" }
+        LOD 200
+        
+        // 渲染正面
+        Cull Back
 
+        CGPROGRAM
+        #pragma surface surf Standard fullforwardshadows alpha
+        #pragma target 3.0
+
+        sampler2D _MainTex;
+
+        struct Input
+        {
+            float2 uv_MainTex;
+        };
+
+        half _Glossiness;
+        half _Metallic;
+        fixed4 _Color;
+
+        void surf (Input IN, inout SurfaceOutputStandard o)
+        {
+            fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
+            o.Albedo = c.rgb;
+            o.Metallic = _Metallic;
+            o.Smoothness = _Glossiness;
+            o.Alpha = c.a;
+        }
+        ENDCG
+        
+        // 渲染背面
+        Cull Front
+        
+        CGPROGRAM
+        #pragma surface surf Standard fullforwardshadows alpha vertex:vert
+        #pragma target 3.0
+        
+        struct Input
+        {
+            float2 uv_MainTex;
+        };
+        float _Thickness;
+
+        void vert(inout appdata_full v)
+        {
+            v.vertex.xyz += v.normal * _Thickness;
+        }
+
+        sampler2D _MainTex;
+        half _Glossiness;
+        half _Metallic;
+        fixed4 _Color;
+
+        void surf (Input IN, inout SurfaceOutputStandard o)
+        {
+            fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
+            o.Albedo = c.rgb;
+            o.Metallic = _Metallic;
+            o.Smoothness = _Glossiness;
+            o.Alpha = c.a;
+        }
+        ENDCG
+    }
+    FallBack "Diffuse"
+}
+```
+
+![](../images/2022.10.10/4.png)
+
+![](../images/2022.10.10/5.png)
 
 
 
