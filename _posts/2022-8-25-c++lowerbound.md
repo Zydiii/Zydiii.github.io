@@ -11,9 +11,10 @@ tags: [C++]
 
 ## std::lower_bound(), std::upper_bound()
 
-- `std::lower_bound()` 在指定区域内查找不小于目标值的第一个元素
-
-- `std::upper_bound()` 在指定范围内查找大于目标值的第一个元素
+- `std::lower_bound()` 在指定区域内查找不小于目标值的第一个元素，在从小到大的排好序的数组中，在数组的[begin, end)区间中二分查找第一个大于等于value的数，找到返回该数字的地址，没找到则返回end。
+- `std::upper_bound()` 在指定范围内查找大于目标值的第一个元素，在从小到大的排好序的数组中，在数组的[begin, end)区间中二分查找第一个大于value的数，找到返回该数字的地址，没找到则返回end。
+- `upper_bound(begin, end, value, greater<int>())` 在从大到小的排好序的数组中，在数组的[begin, end)区间中二分查找第一个小于value的数，找到返回该数字的地址，没找到则返回end。
+- `lower_bound(begin, end, value, greater<int>())` 在从大到小的排好序的数组中，在数组的[begin, end)区间中二分查找第一个小于等于value的数，找到返回该数字的地址，没找到则返回end。
 
 ```C++
 // lower_bound/upper_bound example
