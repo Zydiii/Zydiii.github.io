@@ -53,6 +53,10 @@ tags: [Unreal]
 - Change Weather 节点可供在蓝图中修改天气，也可以设置随机天气
 - 雪地自带了 Trail 效果，但是我没有找到可以自定义 Trail 形状的，用了它的雪地就不能用 OpenLand 的脚印了，感觉可能会有问题
 
+## Tank
+
+- Tank 的运动可以用 Chaos Vehicle 来做，还要修改 Physical Asset，不过我们应该不需要控制车辆的运动，反而是根据别人给好的路径点更新位置，这个需要考虑插值问题
+- 如果要弄 Chaos，需要调整坦克车模型的骨架，为其创建 Physic Asset
 
 
 
@@ -71,3 +75,6 @@ tags: [Unreal]
 ## References
 
 - [Open Land & Unreal Engine - Landscape Basics](https://www.youtube.com/watch?v=s9w_WapqTLg&t=211s)
+- [UE4 Tutorial: Tank Tracks with Vigliante Free Assets Part 1/2](https://www.youtube.com/watch?v=qoW_LE_V5ms&t=553s)
+- [UE5 Tutorial - Chaos Tank Blueprint](https://www.youtube.com/watch?v=i8RR5kNouwI&t=1038s)
+- [Setup drivable vigilante chaos vehicle - Tutorial Unreal Engine 5](https://www.youtube.com/watch?v=tR3sSMD-D0E)
