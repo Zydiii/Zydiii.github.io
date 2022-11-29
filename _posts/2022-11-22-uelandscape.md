@@ -56,7 +56,19 @@ tags: [Unreal]
 ## Tank
 
 - Tank 的运动可以用 Chaos Vehicle 来做，还要修改 Physical Asset，不过我们应该不需要控制车辆的运动，反而是根据别人给好的路径点更新位置，这个需要考虑插值问题
-- 如果要弄 Chaos，需要调整坦克车模型的骨架，为其创建 Physic Asset
+- 如果要弄 Chaos，需要调整坦克车模型的骨架，为其创建 Physic Asset，还挺复杂的...
+- 同时如何将导航数据映射到车辆上？可能车辙印也会有问题
+- 我觉得也许不需要用 Chaos，而是用 UE 的导航系统，因为到时候发过来的也是导航点，用 UE 自带的导航系统也许可以比较方便的让车行驶过去
+- 周末还是试了一下 Chaos 发现还是不能正常控制车辆移动，所以暂定方案还是就用 CharacterMovement + NavAI 控制坦克移动吧，需要学一下 CharacterMovement，不过现在最关键的问题还是雪地的脚印，似乎需要将交互点调高一点脚印比较正常，但是这个不能修改印记样式，并且脚印只有在雪地里才有，我试了一下如果用 Openland 的 deform，在雪地里他不能改 normal，看起来比较奇怪，我把 OpenLand_UDW_Support 的 Normal 输出改了，就用的 Openland 原来的输出，没有从 UDW 中拿，这样看 normal 正常了许多
+
+![](../images/2022.11.22/8.png)
+
+
+- 同时不知道为什么二者都会存在部分地形无法显示印记的问题，感觉和检测有关系，并且 RVT 闪烁的很厉害。感觉也许需要学一下自己弄 trails，不用他自带的 RVT
+
+
+## Trails
+
 
 
 
