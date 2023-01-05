@@ -62,4 +62,5 @@ tags: [Unreal]
     }
 ```
 
-- 我尝试使用了插件 Pak Loader，能够打开 Plugins 下制作的关卡，但是来自 /Engine/ 和 /Game/ 目录下的材质、Mesh 等，无法被正确读取，同时我还很担心 Plugin 下的 GameMode 不能被正确加载应该怎么办
+- 我尝试使用了插件 Pak Loader，能够打开 Plugins 下制作的关卡，但是来自 /Engine/ 和 /Game/ 目录下的材质、Mesh 等，有的无法被正确读取，同时我还很担心 Plugin 下的 GameMode 不能被正确加载应该怎么办，以及该插件没有测试非 Windows 平台，我担心其他平台无法正确打包与解析
+- 最终还是用了做 DLC 的方案，需要在 Project Launcher 中配置 MainGame 和 DLC，然后 DLC 会生成一个 .pak，将它复制到 MainGame 的 Paks 文件夹下就能打开了，UE 应该是进行了自动挂载，需要记得在 .build.cs 文件中 Include 上该插件
