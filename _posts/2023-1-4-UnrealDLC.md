@@ -63,4 +63,19 @@ tags: [Unreal]
 ```
 
 - 我尝试使用了插件 Pak Loader，能够打开 Plugins 下制作的关卡，但是来自 /Engine/ 和 /Game/ 目录下的材质、Mesh 等，有的无法被正确读取，同时我还很担心 Plugin 下的 GameMode 不能被正确加载应该怎么办，以及该插件没有测试非 Windows 平台，我担心其他平台无法正确打包与解析
-- 最终还是用了做 DLC 的方案，需要在 Project Launcher 中配置 MainGame 和 DLC，然后 DLC 会生成一个 .pak，将它复制到 MainGame 的 Paks 文件夹下就能打开了，UE 应该是进行了自动挂载，需要记得在 .build.cs 文件中 Include 上该插件
+- 最终还是用了做 DLC 的方案，需要在 Project Launcher 中配置 MainGame 和 DLC，DLC 的名字要和 Plugin 的名字相同，然后 DLC 会生成一个 .pak，将它复制到 MainGame 的 Paks 文件夹下就能打开了，UE 应该是进行了自动挂载，需要记得在 .build.cs 文件中 Include 上该插件，以及如果已经 Build 的 exe 加上新加的插件是无法被正确挂载的，但在旧的插件下放新的地图是可以的，但还是会出现 /Engine/ 材质无法加载的问题
+- 在生成 pak 时，需要取消勾选 Project Settings 下的 Share Material，因为这种机制压缩了材质，会让挂载的 pak 里一些纹理找不到正确的位置，Use Io Store 不知道有啥用，但是最好也取消勾选，这样 DLC 的材质就能正确加载啦，但我不知道为什么 Pak Loader 不行，道理来说应该是一样的
+- 可以看到我这个项目下 Mount point 是 ../../../，引擎下的资源是 Engine/Content/，项目资源是 ProjectName/Content/，插件的资源是 ProjectName/Plugins/PluginName/Content/
+
+![](../images/2023.1.4/0.png)
+
+![](../images/2023.1.4/1.png)
+
+- 我之前测试 PakLoader 打包的资源文件结构如下，是一致的，也就是说问题不在 pak 这里，也对，毕竟都是用 Project Launcher 打包的，应该还是引擎本身对 pak 的加载方式有特殊的处理，直接读 pak 导致一些文件索引目录不一致
+
+![](../images/2023.1.4/2.png)
+
+![](../images/2023.1.4/3.png)
+
+- 这倒是提醒我了，我没有用同一个项目打包加载测试 Pak Loader，也许我在同一个项目下 Pak Loader 是可行的？但感觉这样的话和用引擎直接做 DLC 也没有区别了，需要在同一个项目下提前设好 Plugin 才能正确加载，暂时没空细看了，有空了可以去看看源码，在 LaunchEngineLoop.cpp
+- 
