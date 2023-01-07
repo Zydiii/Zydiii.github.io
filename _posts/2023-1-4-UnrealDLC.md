@@ -78,4 +78,169 @@ tags: [Unreal]
 ![](../images/2023.1.4/3.png)
 
 - 这倒是提醒我了，我没有用同一个项目打包加载测试 Pak Loader，也许我在同一个项目下 Pak Loader 是可行的？但感觉这样的话和用引擎直接做 DLC 也没有区别了，需要在同一个项目下提前设好 Plugin 才能正确加载，暂时没空细看了，有空了可以去看看源码，在 LaunchEngineLoop.cpp
-- 
+
+## Pixel Streaming
+
+- 虚幻引擎包含了一个称为像素流送（Pixel Streaming）的系统，通过该系统，来自远程虚幻引擎实例的音频和视觉图像被流式传输到 WebRTC 对端（通常是网络浏览器），而键盘、鼠标和触屏输入则可以从 WebRTC 对端传回，以促进与此 Pixel Streaming Unreal Engine 实例的交互
+- Unreal Engine 的 Pixel Streaming 系统是建立在 WebRTC 之上的，现代 Web 浏览器很好地支持它。3 WebRTC 专门设计为通过公共互联网进行双向、低延迟实时通信的整体解决方案。然而，有许多流媒体场景要么是单向的、非实时的，要么在不受数据包丢失或公共互联网变化的网络条件影响的受控网络环境中运行。此类流式传输场景的示例包括：直播、模拟软件、遗留硬件，或在完全受控的专用网络中运行的简单流式传输场景。这些场景不一定需要也不支持 WebRTC 的技术组合
+- 要运行带有像素流插件的虚幻引擎应用程序，计算机必须具有以下类型的图形硬件之一：支持硬件加速视频编码（NVENC）的NVIDIA GPU硬件。请参阅NVIDIA的支持设备对照表。支持高级媒体框架（AMF）的AMD GPU硬件
+- 首先运行 C:\Program Files\Epic Games\UE_5.0\Samples\PixelStreaming\WebServers\SignallingWebServer\platform_scripts\cmd 下的 setup.bat，由于网络问题很可能下载不下来
+
+![](../images/2023.1.4/4.png)
+
+- 那么需要查看脚本，看到下载地址，根据 node -v 的版本去下载对应的 node.zip，比如我现在的版本需要下载 https://nodejs.org/dist/v18.13.0/node-v18.13.0-win-x64.zip，然后删掉要下载的部分脚本内容
+
+```Bash
+@Rem Copyright Epic Games, Inc. All Rights Reserved.
+
+@echo off
+
+@Rem Set script location as working directory for commands.
+pushd "%~dp0"
+
+@Rem Name and version of node that we are downloading
+SET NodeVersion=v18.13.0
+SET NodeName=node-%NodeVersion%-win-x64
+
+@Rem Unarchive the .zip
+tar -xf node.zip
+
+@Rem Rename the extracted, versioned, directory that contains the NodeJS binaries to simply "node".
+ren "%NodeName%\" "node"
+
+@Rem Print node version
+echo Node version: & node\node.exe -v
+
+@Rem Pop working directory
+popd
+```
+
+- 然后再恢复原来的脚本内容，防止之后要用
+
+```Bash
+@Rem Copyright Epic Games, Inc. All Rights Reserved.
+
+@echo off
+
+@Rem Set script location as working directory for commands.
+pushd "%~dp0"
+
+@Rem Name and version of node that we are downloading
+SET NodeVersion=v18.13.0
+SET NodeName=node-%NodeVersion%-win-x64
+
+@Rem Look for a node directory next to this script
+if exist node\ (
+  echo Node directory found...skipping install.
+) else (
+  echo Node directory not found...beginning NodeJS download for Windows.
+
+  @Rem Download nodejs and follow redirects.
+  curl -L -o ./node.zip "https://nodejs.org/dist/%NodeVersion%/%NodeName%.zip"
+
+  @Rem Unarchive the .zip
+  tar -xf node.zip
+
+  @Rem Rename the extracted, versioned, directory that contains the NodeJS binaries to simply "node".
+  ren "%NodeName%\" "node"
+
+  @Rem Delete the downloaded node.zip
+  del node.zip
+)
+
+@Rem Print node version
+echo Node version: & node\node.exe -v
+
+@Rem Pop working directory
+popd
+```
+
+- CoTURN 下载没问题，所以直接走一遍 setup.bat
+- 然后来到 SignalWebServer 文件夹，我不知道为什么文档说直接运行 setup.ps1，但文件夹里根本没有，看别的博主说 UE5 删掉了，可以直接从 UE4 中复制,咱就是说能不能同时更新一下文档。自己新建一个 run.bat
+
+```Bash
+:: Copyright Epic Games, Inc. All Rights Reserved.
+@echo off
+ 
+pushd %~dp0
+ 
+call setup.bat
+ 
+title Cirrus
+ 
+::Run node server
+::If running with frontend web server and accessing outside of localhost pass in --publicIp=<ip_of_machine>
+node cirrus %*
+ 
+popd
+pause
+```
+
+- 运行即可启动信令服务器，需要注意的是，打包之后这些服务会被复制到 Engine 文件夹下，到时候应该直接从 Build 后的 Engine 下面运行
+
+![](../images/2023.1.4/5.png)
+
+- 给生成的 exe 创建快捷方式并且添加命令参数 C:\Users\didi\Desktop\Unreal\TankSim\TankNavSystem\Saved\StagedBuilds\Windows\TankNavSystem.exe -AudioMixer -PixelStreamingIP=localhost -PixelStreamingPort=8888 -log -RenderOffScreen ，然后双击启动，可以看到服务器那边已经连接上了
+
+![](../images/2023.1.4/6.png)
+
+![](../images/2023.1.4/7.png)
+
+- 也可以不用快捷方式，直接写个脚本 launch.bat
+
+```Bash
+@echo off
+start C:\Users\didi\Desktop\Unreal\TankSim\TankNavSystem\Build\Windows\TankNavSystem.exe -AudioMixer -PixelStreamingIP=localhost -PixelStreamingPort=8888 -log -RenderOffScreen
+```
+
+- 如果遇到点击 click to start 没反应的情况，可以在游戏运行的命令行中按下 Ctrl C 之后就可以了，不知道什么原理。
+
+![](../images/2023.1.4/8.png)
+
+- 总之已经可以通过访问 localhost 查看流传输的效果啦，但是很卡，本地访问都这么卡，今后应该如何解决
+
+![](../images/2023.1.4/9.png)
+
+- 要想改变服务端口，需要修改 config.json，HttpPort 为玩家连接的端口，StreamerPort 为像素流的端口
+  
+![](../images/2023.1.4/10.png)
+
+- Matchmaker 可以用来做负载均衡，在 MatchMaker 下的 config.js 中确认 HttpPort，这里为 80，设置 UseMatchmaker 为 true，并修改端口。然后修改 launch.bat 中的 PixelStreamingPort 分别对应信令服务器的 StreamerPort。然后分别启动 MatchMaker 服务、信令服务器、游戏实例，之后访问 MatchMaker 服务即可，就可以看到服务已经被正确转发
+
+```json
+{
+	"UseFrontend": false,
+	"UseMatchmaker": true,
+	"UseHTTPS": false,
+	"UseAuthentication": false,
+	"LogToFile": true,
+	"LogVerbose": true,
+	"HomepageFile": "/Public/player.html",
+	"AdditionalRoutes": {},
+	"EnableWebserver": true,
+	"MatchmakerAddress": "",
+	"MatchmakerPort": "9999",
+	"PublicIp": "localhost",
+	"HttpPort": 81, //
+	"HttpsPort": 443,
+	"StreamerPort": 881, //
+	"SFUPort": 8881 //
+}
+```
+![](../images/2023.1.4/12.png)
+
+![](../images/2023.1.4/11.png)
+
+- 但这样的话一个实例只够一个用户使用，好像不是很合适这个应用场景，这个项目应该所有用户共用一个场景就行了
+
+![](../images/2023.1.4/13.png)
+
+
+
+
+## 小结
+
+## References
+
+- [Unreal流送方案](https://zhuanlan.zhihu.com/p/480097075)
+- [UE5像素流送局域网部署纯小白教程](https://www.bilibili.com/video/BV1Be41157KH/)
