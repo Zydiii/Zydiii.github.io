@@ -263,3 +263,4 @@ start C:\Users\didi\Desktop\Unreal\TankSim\TankNavSystem\Build\Windows\TankNavSy
 - [Unreal流送方案](https://zhuanlan.zhihu.com/p/480097075)
 - [UE5像素流送局域网部署纯小白教程](https://www.bilibili.com/video/BV1Be41157KH/)
 - [Where's my stream? TURN Server debugging for Pixel Streaming](https://dev.epicgames.com/community/learning/tutorials/VY4X/unreal-engine-where-s-my-stream-turn-server-debugging-for-pixel-streaming)
+- [UE4 4.27像素流公网布置教程](https://blog.csdn.net/qq_35337794/article/details/128461244)
