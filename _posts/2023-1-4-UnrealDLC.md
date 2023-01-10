@@ -235,6 +235,24 @@ start C:\Users\didi\Desktop\Unreal\TankSim\TankNavSystem\Build\Windows\TankNavSy
 
 ![](../images/2023.1.4/13.png)
 
+- 在实际部署的时候，本地 localhost 是能访问的，但是外部机器访问就没有画面了，全是黑屏，就很奇怪，本地链接的时候 state 都是 complete，外网链接的时候，state 直接 close 了
+
+![](../images/2023.1.4/14.png)
+
+![](../images/2023.1.4/0.jpg)
+
+![](../images/2023.1.4/1.jpg)
+
+- 查询无果，在 npy 的帮助下测试发现，流推送的逻辑是：他会打开网页，然后访问网页的服务端，拿到那个播放器，然后网页的服务端会告诉客户端有人要链接了，然后告诉网页的播放器客户端地址在哪，然后网页上的播放器和客户端直接建立连接。所以其实跑客户端的那台机器需要把相关的 UDP 端口放通，但链接的端口每次都不一样，50000+ 的端口随机生成的，需要看一下相关的逻辑才行。至少把机器的所有端口放通确实有画面。
+- 但 UE 的文档写了这样一段话“另外，可使用TURN服务器在UE4应用和浏览器之间中继媒体流。启动TURN协议后，TURN服务器一方面与UE4应用连接，另一方面则与浏览器连接。UE4应用将自身所有流送的数据发送给TURN服务器，后者又将数据传送至浏览器。在此情况下，UE4应用和浏览器间并无直接连接。（如要在无线运营商网络中支持移动设备，只能使用TURN服务器。移动网络通常不支持客户端通过WebRTC协议进行连接。）” 那么说明是可以有个服务器来做中转的，因为到时候不可能把所有端口都放通
+- 好的破案了，TURN服务器的端口 19303 需要放开 TCP 和 UDP 才能让流推送走 TURN 服务转发（可恶，折腾我一天）
+
+## ChunkDownloader
+
+
+
+
+
 
 
 
@@ -244,3 +262,4 @@ start C:\Users\didi\Desktop\Unreal\TankSim\TankNavSystem\Build\Windows\TankNavSy
 
 - [Unreal流送方案](https://zhuanlan.zhihu.com/p/480097075)
 - [UE5像素流送局域网部署纯小白教程](https://www.bilibili.com/video/BV1Be41157KH/)
+- [Where's my stream? TURN Server debugging for Pixel Streaming](https://dev.epicgames.com/community/learning/tutorials/VY4X/unreal-engine-where-s-my-stream-turn-server-debugging-for-pixel-streaming)
