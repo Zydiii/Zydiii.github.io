@@ -12,7 +12,7 @@ lang: en-US
 title: "Zydiii"
 
 # A description of your site for meta tag, search engine results.
-description: "Lonely Lover of Computer Graphics"
+description: "Math、Computer Graphics、Game Programming~"
 
 # The subpath of your site, e.g. /blog, for generating urls.
 baseurl: ""
@@ -34,8 +34,8 @@ navigation:
   #   url: /about/
   # - text: Style Guide
   #   url: /style-guide/
-  - text: Tags
-    url: /tags/
+  # - text: Tags
+  #   url: /tags/
   # - text: Download
   #   url: https://github.com/JustGoodThemes/Scriptor-Jekyll-Theme
 
