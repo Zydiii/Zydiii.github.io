@@ -3,7 +3,7 @@ layout: post
 title: "毕设记录（二）"
 description: ""
 date: 2023-2-3
-feature_image: images/2023.2.3/0.png
+feature_image: images/2023.2.3/2.png
 tags: [Unreal]
 ---
 
