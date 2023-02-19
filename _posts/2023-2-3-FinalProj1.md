@@ -3,7 +3,7 @@ layout: post
 title: "毕设记录（二）"
 description: ""
 date: 2023-2-3
-feature_image: images/2023.2.3/0.png
+feature_image: images/2023.2.3/2.png
 tags: [Unreal]
 ---
 
@@ -39,13 +39,22 @@ Icon = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), NULL, *(Defu
 ```
 
 - 创建 EMissileType 枚举表示干扰弹类型，FMissileData 结构存储干扰弹详细数据，AMissile 类用来生成粒子效果、控制发射
-- 新建一个飞机类 AFlighter 控制飞机的飞行与开火，这里需要考虑一下是将一发干扰弹作为一个对象还是多发干扰弹统一由一个对象自动管理销毁，对象销毁的时机是什么，不然可能会占用大量内存
+- 创建 EFlighterType 表示飞机的类型，FFireLocationData 描述了飞机的干扰弹发射点属性，包括挂载的 SocketName、Missile 对象、数量、旋转等，FFireStrategy 描述了一组干扰弹的释放策略，主要记录了一组可发射干扰弹的位置数组。创建 FFlighterData 结构描述飞机的属性，包括名称、类别、策略数组等，新建一个飞机类 AFlighter 控制飞机的飞行与开火，这里需要考虑一下是将一发干扰弹作为一个对象还是多发干扰弹统一由一个对象自动管理销毁，对象销毁的时机是什么，不然可能会占用大量内存，飞机存储了飞机数据，然后含有当前释放策略编号，用于控制当前释放哪种干扰弹
 - 在发射点骨架创建 Sokcet，并且使自身坐标系 X 轴指向前方
 - GetWorldTimerManager().SetTimer 不能放到构造函数中，需要在 BeginPlay 中，否则会 Crash
 - 在计时器方法中使用 SetLifeSpan(MissileData.LifeTime) 好像会出现问题，但似乎是因为销毁后出现了空引用
 
 ![](../images/2023.2.3/2.png)
 
+- 在某个类的 Constructor 引用别的对象可能会得到 NULL 的结果
+- CreateDefaultSubobject 只能在无参构造器中使用而不能在BeginPlay等函数中使用
+- `Invalid object in GC: 0x000000effcb7ac10, ReferencingObject: ` 可能是因为 TArray 数组中含有未被赋值定义且不为 nullptr 的 Object 指针
+- TMap 要用 Add 添加新 key-value，直接用 [] 会 crash
+- 干扰弹释放框架弄好了接下来主要就是弄飞机的干扰弹粒子效果了，但无论怎么调都有点丑...
+
+![](../images/2023.2.3/0.jpg)
+
+![](../images/2023.2.3/3.png)
 
 
 ## 小结
