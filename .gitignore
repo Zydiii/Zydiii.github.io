@@ -17,3 +17,5 @@ _asset_bundler_cache
 _site
 
 /save/
+
+.pdf

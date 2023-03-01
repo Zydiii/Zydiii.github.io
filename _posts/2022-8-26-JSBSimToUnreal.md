@@ -17,6 +17,19 @@ tags: [Unreal, JSBSim]
 - 而这些 property 是为 flight_control 服务的，也就是飞行控制的核心逻辑了，但是我没看懂这些 flight_control 是在哪里定义的，还是说他们自己就代表了一种函数？但是我把官方示例中的 flight_control copy 过来运行还是会崩溃，甚至直接把这个 block 删掉也不行，但是我在官方的 xml 文件把 flight_control 这块删掉也仍然不可以正常运行，这意味着其他部分可能也存在问题......
 - 看来直接套用是不太行的，得把 JSBSim 的基本工作流搞明白才能自由添加自己想要的配置。由于锅还没有分到我头上，我目前不打算继续研究了，之后有具体的任务之后再来参考一下这个 debug 经验......
 
+## Matlab RL Toolbox
+
+- （时隔半年这该死的锅又甩回了我的身上，而且还要用 Simulink，真不知道我们这专业用这玩意干嘛，还不给时间学，今天发通知明天要 🙄）
+- 输入为 6\*1 向量，输出为 34\*1 向量
+
+![](/images/2022.8.26/1.png)
+
+- 然后走一遍训练逻辑，这里有两个问题：1）需要一个全局的中转服务器告诉我对局所有状态，包括战局的情况等 2）JSBSim 显示 `Remember to reset the program by typing clearSF in the matlab command window! ` 这是否意味着每一轮训练结束我都需要进行 Clear 操作，但是它的 Clear 是会把所有状态都 Clear，会把训练的数据也清理掉，但我没找到它具体会产生什么数据，能不能直接清理它的状态
+
+![](/images/2022.8.26/2.png)
+
+
+
 ## References
 
 - [A DIY Flight Simulator Tutorial](https://dev.epicgames.com/community/learning/tutorials/mmL/a-diy-flight-simulator-tutorial)
