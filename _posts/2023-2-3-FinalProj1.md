@@ -56,6 +56,24 @@ Icon = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), NULL, *(Defu
 
 ![](../images/2023.2.3/3.png)
 
+## 基于物理的箔片型红外面源诱饵弹扩散运动模型
+
+- 创建箔片几何模型
+
+![](../images/2023.2.3/4.png)
+
+- 创建一个粒子基类含有一些用户可控的参数：风速
+
+![](../images/2023.2.3/5.png)
+
+- 每一发打出 1000 个箔片
+
+
+
+
+
+
+
 
 ## 小结
 
