@@ -40,7 +40,7 @@ tags: [毕设]
 - 把切好的地图放到 `data/` 文件夹下面，然后可以通过 `9090` 端口访问，比如 `http://localhost:9090/data_gis/fig/tilemapresource.xml`
 - 具体配置可以修改 `conf/nginx.conf`
 
-    ```conf
+    ```nginx
     server {
         listen       9090;
         server_name  localhost;
