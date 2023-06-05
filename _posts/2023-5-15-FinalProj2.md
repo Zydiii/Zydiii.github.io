@@ -73,3 +73,8 @@ tags: [毕设]
 - 在 `Cesium3DTileset` 上添加一个 `CesiumTileMapServiceRasterOverlay`，Url 填写上对应的影响服务地址
 
     ![](./../images/2023.5.15/5.png)
+
+## Niagara 二号点弹
+
+- 时隔一个多月甚至两个月？终于可以安心搞毕设了！但是我已经忘光了 = = 
+- 那么我如果想要制作一个 NS 基类，应当如何做呢？试了直接创建 NS 和用代码创建，都不行。文档也查不到啊啊啊 ,,ԾㅂԾ,,
