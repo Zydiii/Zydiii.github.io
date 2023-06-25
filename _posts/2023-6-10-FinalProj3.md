@@ -179,10 +179,9 @@ tags: [毕设]
 
 ![](../images/2023.6.10/48.png)
 
+## UI
 
-
-
-
+- 选中 CameraActor，右键点击 Pilot 可以以相机为视角遨游
 
 
 
