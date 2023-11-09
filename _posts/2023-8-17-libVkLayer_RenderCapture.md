@@ -40,7 +40,7 @@ adb shell perfetto -o /data/misc/perfetto-traces/trace_file.perfetto-trace -t 60
 # 拉取文件并使用 https://ui.perfetto.dev/ 或者其他方式读取
 adb pull ${perfetto_output_path} ${path}
 # e.g.
-adb pull /data/misc/perfetto-traces/trace.perfetto-trace ./
+adb pull /data/misc/perfetto-traces/trace_file.perfetto-trace ./
 ```
 
 ## 5. 读取 layer dump 的数据
