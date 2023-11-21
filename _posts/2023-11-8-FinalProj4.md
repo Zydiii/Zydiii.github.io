@@ -508,7 +508,6 @@ void FCustomPassMeshProcessor::AddMeshBatch(const FMeshBatch& RESTRICT MeshBatch
 
 ### 透明物体
 
-
 - v0 只有不透明物体，而且行为和 BasePass 一致？？
 ```C++
 void FCustomPassMeshProcessor::AddMeshBatch(const FMeshBatch& RESTRICT MeshBatch, uint64 BatchElementMask, const FPrimitiveSceneProxy* RESTRICT PrimitiveSceneProxy, int32 StaticMeshId)
@@ -586,6 +585,7 @@ void FCustomPassMeshProcessor::AddMeshBatch(const FMeshBatch& RESTRICT MeshBatch
 ```
 
 - 好吧，问题出在，shader 对 opacitymask 做了 clip！ue 下默认的 opacitymask 是 0.333，所以才会出现比较小的不透明度的物体不绘制，因为在 PS 端就被 clip 了！找了我整整一天，一直以为是 CPU 那边的问题，结果通过在 VS 对 depth 做了更改，发现所有物体都没有通过深度测试，才意识到 AddMeshBatch 那边没少（不过一开始的那个判断也还是有问题，不能提前判断？待验证）
+- 实测中还是遇到问题了，发现 get shader 始终是失败的，半透明物体并没有被加到我的 pass 中，但是比较奇怪的点在于如果我重启了，就会被添加进去，然后最终 build 出来的版本还是没有，所有半透明物体都没有加到 pass 中，好困惑。目前解决方案是用 customdepthpass 直接写入数据了，但比较看起来明明没啥区别，等之后有空再研究吧
 
 ### depth fade
 
@@ -1974,7 +1974,7 @@ case MSM_Infrared_Default:
 
 ### 填充 FGBufferData
 
-- **ShadingModelsMaterial.ush** 
+- **ShadingModelsMaterial.ush** 添加写入，不过这里应该是只针对 basepass 的修改
 
 ```C++
 #if MATERIAL_SHADINGMODEL_INFRARED_DEFAULT
@@ -1996,21 +1996,27 @@ case MSM_Infrared_Default:
 		GBuffer.CustomData.a = Opacity;
 	}
 #endif
+```
 
+- git 设置代理
 
+```shell
+git config --global https.proxy http://127.0.0.1:1080
 
+git config --global https.proxy https://127.0.0.1:1080
 
+git config --global --unset http.proxy
 
+git config --global --unset https.proxy
 
-
-
-
-
-
-
-
+git config --global http.proxy socks5://127.0.0.1:7890
+git config --global https.proxy socks5://127.0.0.1:7890
+git config --global http.https://github.com.proxy socks5://127.0.0.1:7890
+```
 
 ## 小结
+
+花了整整两周来修改和调试，期间遇到不少问题，有的问题被解决得也莫名其妙，好在终于有个能用的版本了，打算新写一篇用一个全新的 UE 来改关键的内容，希望别再出什么奇奇怪怪的问题了
 
 ## References
 
