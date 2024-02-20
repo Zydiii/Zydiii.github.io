@@ -72,7 +72,13 @@ tags: [毕设, Unreal]
 - 修改 Custom Depth Pixel Shader `05abc28eb985110cc5fd4176e2a3ab34601f86ee`
 - 设置 CustomDepth 的混合写入 `3fd397fdab97753bb6678196509cb737ef0f06aa`
 
+## 如何进行飞机的红外仿真（双实体+温度计算+材质）？
 
+- 设置飞机的速度 `AInfraredSimulator::UpdateFlighterMaterialParameter()`，利用材质参数 `UKismetMaterialLibrary::SetScalarParameterValue` 来传递逻辑信息中的数据到材质中，这里设置飞机的速度 `FlightMa`
+- 计算飞机的温度 `MF_GetFlightBodyTemperature` `return T_b*(1+0.164*pow(Ma, 2));`
+- 计算出来的温度、预设的发射率、种类传递给材质参数
+
+![](../images/2024.1.25/0.png)
 
 
 ## 小结

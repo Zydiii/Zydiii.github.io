@@ -183,7 +183,9 @@ tags: [毕设]
 
 - 选中 CameraActor，右键点击 Pilot 可以以相机为视角遨游
 
+## Projectile
 
+- 需要在 Construction Script 中去修改初始速度
 
 
 
